@@ -1,15 +1,17 @@
 import { Router } from "express";
 import { createMedicine, deleteMedicine, readMedicine, updateMedicine } from "../controler/medicineController";
 import { updateValiadation } from "../middleware/MedicineValidation";
+import { uploadMedicinePhoto } from "../middleware/UploadMedicinePhoto";
+import { verivyToken } from "../middleware/authorization";
 const router = Router()
 
 // route for add new medicine
-router.post(`/`, [createMedicine], createMedicine)
+router.post(`/`, [verivyToken,uploadMedicinePhoto.single(`photo`),createMedicine], createMedicine)
 //routte for show
-router.get(`/`, readMedicine)
-//route for updare medicine
-router.put(`/:id`, [updateValiadation], updateMedicine)
+router.get(`/`,[verivyToken], readMedicine)
+//route for update medicine
+router.put(`/:id`, [verivyToken,uploadMedicinePhoto.single(`photo`),updateValiadation], updateMedicine)
 //route for remove medicine
-router.delete(`/:id`,deleteMedicine )
+router.delete(`/:id`,[verivyToken],deleteMedicine )
 
 export default router

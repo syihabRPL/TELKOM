@@ -1,6 +1,9 @@
 import { join } from "@prisma/client/runtime/library";
 import { NextFunction, Request, Response } from "express";
 import Joi from "joi";
+import path from "path";
+import { ROOT_DIRECTORY } from "../config";
+import fs from "fs"
 
 //create schema for new medicine
 
@@ -20,6 +23,14 @@ const createValiadation = (
 ) => {
     const validate = createSchema.validate(req.body)
     if (validate.error) {
+        //delete previous uploaded
+        let fileName: string = req.file?.filename || ``
+        let pathFile = path.join(ROOT_DIRECTORY, "Public", "medicine-photo", fileName )
+        //check existanision file
+        let fileExists = fs.existsSync(pathFile)
+        if (fileExists && fileName !== ``) {
+            fs.unlinkSync(pathFile)
+        }
         return res.status(400)
             .json({
                 message: validate
@@ -47,6 +58,14 @@ const updateValiadation = (
 ) => {
     const validate = UpdateSchema.validate(req.body)
     if (validate.error) {
+        //delete previous uploaded
+        let fileName: string = req.file?.filename || ``
+        let pathFile = path.join(ROOT_DIRECTORY, "Public", "medicine-photo", fileName )
+        //check existanision file
+        let fileExists = fs.existsSync(pathFile)
+        if (fileExists && fileName !== ``) {
+            fs.unlinkSync(pathFile)
+        }
         return res.status(400)
             .json({
                 message: validate
@@ -58,4 +77,4 @@ const updateValiadation = (
     }
     next()
 }
-export {createValiadation,updateValiadation}
+export { createValiadation, updateValiadation }
